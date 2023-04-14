@@ -72,8 +72,21 @@ function findUserById(id) {
     return users['users_list'].find((user) => user['id'] === id);
 }
 
+function generateId() {
+    var lettersAndDigits = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let id = '';
+    for (let i = 0; i < 6; i++) {
+      id += lettersAndDigits.charAt(Math.floor(Math.random() * lettersAndDigits.length));
+    }
+    return id;
+}
+
 app.post('/users', (req, res) => {
-    const userToAdd = req.body;
+    const userToAdd = {
+        id: generateId(),
+        name: req.body.name,
+        job: req.body.job
+    };
     addUser(userToAdd);
     res.status(201).end();
 });
@@ -82,9 +95,9 @@ function addUser(user){
     users['users_list'].push(user);
 }
 
-app.delete('/users/:id', (req, res) => {
-    const id = req.params.id;
-    let result = deleteUser(id);
+app.delete('/users/:name', (req, res) => {
+    const name = req.params.name;
+    let result = deleteUser(name);
     if (result === undefined || result.length == 0)
         res.status(404).send('Resource not found');
     else {
@@ -93,10 +106,26 @@ app.delete('/users/:id', (req, res) => {
     }
 })
 
-function deleteUser(id) {
-    users['users_list'] = users['users_list'].filter((user) => user['id'] !== id);
+function deleteUser(name) {
+    users['users_list'] = users['users_list'].filter((user) => user['name'] !== name);
     return users['users_list'];
 }
+
+// app.delete('/users/:id', (req, res) => {
+//     const id = req.params.id;
+//     let result = deleteUser(id);
+//     if (result === undefined || result.length == 0)
+//         res.status(404).send('Resource not found');
+//     else {
+//         result = {user_list: result};
+//         res.send(result);
+//     }
+// })
+
+// function deleteUser(id) {
+//     users['users_list'] = users['users_list'].filter((user) => user['id'] !== id);
+//     return users['users_list'];
+// }
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:8000`);
