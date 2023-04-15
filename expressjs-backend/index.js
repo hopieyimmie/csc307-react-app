@@ -95,37 +95,27 @@ function addUser(user){
     users['users_list'].push(user);
 }
 
-app.delete('/users/:name', (req, res) => {
-    const name = req.params.name;
-    let result = deleteUser(name);
-    if (result === undefined || result.length == 0)
-        res.status(404).send('Resource not found');
+app.delete('/users/:id', (req, res) => {
+    const id = req.params['id'];
+    if (id !== undefined) {
+        let result = findUserById(id);
+        if (result === undefined || result.length == 0)
+            res.status(404).send('Resource not found');
+        else {
+            deleteUser(id);
+            res.status(204).end();
+        } 
+    }   
     else {
-        result = {user_list: result};
-        res.send(result);
+        res.status(400).end()
     }
 })
 
-function deleteUser(name) {
-    users['users_list'] = users['users_list'].filter((user) => user['name'] !== name);
-    return users['users_list'];
+function deleteUser(id) {
+    users['users_list'] = users['users_list'].filter((user) => user['id'] !== id);
+    // return users['users_list'];
+    // users['users_list'] = 
 }
-
-// app.delete('/users/:id', (req, res) => {
-//     const id = req.params.id;
-//     let result = deleteUser(id);
-//     if (result === undefined || result.length == 0)
-//         res.status(404).send('Resource not found');
-//     else {
-//         result = {user_list: result};
-//         res.send(result);
-//     }
-// })
-
-// function deleteUser(id) {
-//     users['users_list'] = users['users_list'].filter((user) => user['id'] !== id);
-//     return users['users_list'];
-// }
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:8000`);
