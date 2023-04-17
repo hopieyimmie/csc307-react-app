@@ -3,8 +3,7 @@ const cors = require('cors');
 const app = express();
 const port = 8000;
 
-app.use(cors());
-app.use(express.json());
+
 const users = { 
     users_list :
     [
@@ -35,6 +34,9 @@ const users = {
        }
     ]
  }
+
+app.use(cors());
+app.use(express.json());
 
 app.get('/users', (req, res) => {
     const name = req.query.name;
@@ -88,7 +90,7 @@ app.post('/users', (req, res) => {
         job: req.body.job
     };
     addUser(userToAdd);
-    res.status(201).end();
+    res.status(201).send(userToAdd);
 });
 
 function addUser(user){
@@ -113,8 +115,6 @@ app.delete('/users/:id', (req, res) => {
 
 function deleteUser(id) {
     users['users_list'] = users['users_list'].filter((user) => user['id'] !== id);
-    // return users['users_list'];
-    // users['users_list'] = 
 }
 
 app.listen(port, () => {
